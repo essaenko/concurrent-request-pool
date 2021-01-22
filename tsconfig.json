@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "module": "amd",
+    "moduleResolution": "node",
+    "outDir": "./build",
+    "outFile": "./build/index.js",
+    "declaration": true,
+  },
+  "include": [
+    "src/*.ts"
+  ],
+  "exclude": [
+    "*.types.ts",
+    "*.test.ts",
+  ]
+}

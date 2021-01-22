@@ -1,6 +1,6 @@
 {
   "name": "concurrent-request-pool",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple request queue with channels and a limit of parallel connections for both the entire queue and a specific channel.",
   "main": "index.js",
   "scripts": {

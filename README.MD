@@ -1,6 +1,12 @@
-# Usage
+# Typescript based pool of concurrent requests
 
-## Create default queue
+## The main reasons for the creation
+
+Limiting the HTTP protocol to the number of simultaneous connections can lead to a situation where some JS code completely clogs the request queue for tens of seconds ahead and does not allow critical requests to squeeze through.This solution allows you to manage the number of simultaneous requests, as well as their sorting.
+
+## Usage
+
+### Create default queue
 
 ```typescript
 const pool: ConcurrentRequestPool =  new ConcurrentRequestPool({
@@ -9,7 +15,7 @@ const pool: ConcurrentRequestPool =  new ConcurrentRequestPool({
 });
 ```
 
-## Push jobs to default tube
+### Push jobs to default tube
 
 ```typescript
 const pool: ConcurrentRequestPool =  new ConcurrentRequestPool();
@@ -18,7 +24,7 @@ pool.push({
 });
 ```
 
-## Remove jobs from default tube
+### Remove jobs from default tube
 
 ```typescript
 const pool: ConcurrentRequestPool =  new ConcurrentRequestPool();
@@ -31,7 +37,7 @@ pool.remove({
 });
 ```
 
-## Create queue with tubes
+### Create queue with tubes
 
 ```typescript
 const pool: ConcurrentRequestPool =  new ConcurrentRequestPool();
@@ -42,7 +48,7 @@ pool.createTube({
 });
 ```
 
-## Push jobs to custom tube
+### Push jobs to custom tube
 
 ```typescript
 const pool: ConcurrentRequestPool =  new ConcurrentRequestPool();
@@ -60,7 +66,7 @@ pool.push({
 });
 ```
 
-## Remove jobs from custom tube
+### Remove jobs from custom tube
 
 ```typescript
 const pool: ConcurrentRequestPool =  new ConcurrentRequestPool();
@@ -84,7 +90,7 @@ pool.remove({
 pool.remove({ tube: 'my_shift_tube', id: shiftJobID });
 ```
 
-## Stop process tube
+### Stop process tube
 
 ```typescript
 const pool: ConcurrentRequestPool =  new ConcurrentRequestPool();
@@ -97,7 +103,7 @@ pool.disableTube({
 });
 ```
 
-## Start process tube
+### Start process tube
 
 ```typescript
 const pool: ConcurrentRequestPool =  new ConcurrentRequestPool();
@@ -111,7 +117,7 @@ pool.enableTube({
 });
 ```
 
-## Remove custom tube
+### Remove custom tube
 
 ```typescript
 const pool: ConcurrentRequestPool =  new ConcurrentRequestPool();

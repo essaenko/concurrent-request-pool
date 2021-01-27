@@ -4,6 +4,14 @@
 
 Limiting the HTTP protocol to the number of simultaneous connections can lead to a situation where some JS code completely clogs the request queue for tens of seconds ahead and does not allow critical requests to squeeze through.This solution allows you to manage the number of simultaneous requests, as well as their sorting.
 
+## Installation
+
+```npm i concurrent-request-pool```
+
+## npm
+
+https://www.npmjs.com/package/concurrent-request-pool
+
 ## Usage
 
 ### Create default queue

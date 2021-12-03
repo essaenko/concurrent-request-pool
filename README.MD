@@ -136,3 +136,48 @@ pool.removeTube({
   name: 'my_pop_tube' // Tube's name to remove
 });
 ```
+
+## Usage with cache
+
+### Add cache to request pool
+
+```typescript
+const pool: ConcurrentRequestPool =  new ConcurrentRequestPool();
+pool.useCache(new Cache()); // You can implement your own variant of Cache who should match ICache interface from package or use onboard one
+```
+
+If cache are used, pool will firstly check every pushed job and if there is a match in a cache, job will start instantly
+
+> If you don't want call already processed actions, you can use pool.cacheStorage.match method to check it.
+
+### Put value into cache
+
+```typescript
+const pool: ConcurrentRequestPool =  new ConcurrentRequestPool();
+pool.useCache(new Cache());
+
+pool.cacheStorage.put(key, value);
+
+pool.cacheStorage.match(key) // Will return true if there is a key in cache
+pool.cacheStorage.get(key) // Will return value of key in cache or false if there is no key
+```
+
+### Put key into cache
+
+```typescript
+const pool: ConcurrentRequestPool =  new ConcurrentRequestPool();
+pool.useCache(new Cache());
+
+pool.cacheStorage.put(key); //Pool will create field for key with true value in cache
+```
+
+### Get value from cache
+
+```typescript
+const pool: ConcurrentRequestPool =  new ConcurrentRequestPool();
+pool.useCache(new Cache());
+
+pool.cacheStorage.put(key, value);
+
+pool.cacheStorage.get(key) // Will return value of key in cache or false if there is no key
+```

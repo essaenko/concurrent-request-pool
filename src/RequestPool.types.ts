@@ -5,6 +5,7 @@ export interface IRequestPoolInitialProps {
 
 export interface IRequestPoolPushProps {
   tube?: string;
+  key?: string | number;
   action: () => Promise<any>;
 }
 
@@ -16,6 +17,7 @@ export interface IRequestPoolRemoveProps {
 export interface IRequestPoolJob {
   id: number;
   action: () => Promise<any>;
+  key?: string | number;
 }
 
 export interface IRequestPoolTube {

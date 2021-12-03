@@ -10,6 +10,9 @@ import {
   IRequestPoolTube
 } from "./RequestPool.types";
 
+import { Cache } from './Cache';
+import { ICache } from './Cache.types';
+
 
 export class ConcurrentRequestPool {
   private readonly limit;
@@ -25,6 +28,7 @@ export class ConcurrentRequestPool {
       type: 'pop',
     }
   };
+  private cache: Cache | ICache = null;
 
   public constructor({
     limit,
@@ -51,10 +55,15 @@ export class ConcurrentRequestPool {
       counter: this.counter,
     }
   };
+  
+  public get cacheStorage(): Cache | ICache {
+    return this.cache;
+  }
 
   public push = ({
     tube,
     action,
+    key,
                  }: IRequestPoolPushProps): number | false => {
     let id: number;
     if (!action) {
@@ -62,18 +71,34 @@ export class ConcurrentRequestPool {
 
       return false
     }
+    
+    if (this.cache) {
+      if (!key) {
+        console.log(`RequestPool->push: You must provide key field when cache is used to push jobs`);
+      }
+      
+      if (this.cache.match(`${tube || "default"}_${key}`)) {
+        console.log(`RequestPool->push: Job for tube ${tube} and key ${key} already processed, this job will be processed instantly for using cache from service worker or backend, you can check cache manually by cacheStorage.match method`);
+        action();
+        
+        return 0;
+      }
+    }
+    
     if (!tube) {
       id = this.tubes.default.index++;
       this.tubes.default.jobs.push({
         id,
-        action
+        action,
+        key,
       });
     } else if (this.tubes[tube]) {
       if (this.tubes[tube].enabled) {
         id = this.tubes[tube].index++;
         this.tubes[tube].jobs.push({
           id,
-          action
+          action,
+          key,
         });
       } else {
         console.log(`RequestPool->push: Tube with name ${tube} is disabled, enable tube before push new jobs inside`);
@@ -180,7 +205,7 @@ export class ConcurrentRequestPool {
     }
   }
 
-  private processTube = (tube: IRequestPoolTube) => {
+  private processTube = (tube: IRequestPoolTube): void => {
     if (this.limit === 0 || (this.counter < this.limit)) {
       if (tube.enabled) {
         if (tube.limit === 0 || (tube.counter < tube.limit)) {
@@ -197,6 +222,8 @@ export class ConcurrentRequestPool {
             job.action().finally(() => {
               this.counter--;
               tube.counter--;
+              this.cache.put(`${tube}_${job.key}`);
+              console.log(`RequestPool -> processTube: Job for tube ${tube} with key ${job.key} was stored into cache, you can manually set cache value by cacheStorage.put method and use it later.`)
 
               this.processTube(tube);
             });
@@ -208,11 +235,15 @@ export class ConcurrentRequestPool {
     }
   }
 
-  private processQueue = () => {
+  private processQueue = (): void => {
     const tubes: string[] = Object.keys(this.tubes);
 
     tubes.forEach((tube: string) => {
       this.processTube(this.tubes[tube]);
     });
+  }
+  
+  public useCache = (cache: Cache | ICache): void => {
+    this.cache = cache;
   }
 }
